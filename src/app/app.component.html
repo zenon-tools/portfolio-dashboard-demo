@@ -1,0 +1,47 @@
+<div class="root container">
+  <div class="title">Zenon portfolio dashboard demo</div>
+  <div class="description">Input your ZNN address to view your portfolio.</div>
+  <div class="search-input">
+    <input class="input" type="text" #addressInput placeholder="Address">
+    <button (click)="onSearchAddress()">Search</button>
+  </div>
+  <div *ngIf="isLoading">Loading...</div>
+  <div *ngIf="portfolio$ | async as portfolio" class="container">
+    <div class="card" *ngIf="portfolio.stakes.length > 0">
+      <div class="card-title">Stakes</div>
+      <div>{{((stakedAmount$ | async)! / decimals) | number: '1.0-4'}} ZNN</div>
+      <div>{{stakeCount$ | async}} {{(stakeCount$ | async) == 1 ? 'stake' : 'stakes'}}</div>
+    </div>
+    <div class="card" *ngIf="portfolio.delegation.delegate">
+      <div class="card-title">Delegation</div>
+      <div>{{portfolio.delegation.delegate}}</div>
+      <div>{{(portfolio.delegation.delegatedBalance / decimals) | number: '1.0-4'}} ZNN</div>
+      <div>Since {{portfolio.delegation.delegationStartTimestamp * 1000 | date: 'MMM d, y, h:mm:ss a'}}</div>
+    </div>
+    <div class="card" *ngIf="portfolio.sentinel.active">
+      <div class="card-title">Sentinel</div>
+      <div>{{5000 | number: '1.0-4'}} ZNN locked</div>
+      <div>{{50000 | number: '1.0-4'}} QSR locked</div>
+      <div>Since {{portfolio.sentinel.registrationTimestamp * 1000 | date: 'MMM d, y, h:mm:ss a'}}</div>
+      <div>{{portfolio.sentinel.isRevocable ? 'Can be revoked' : 'Not revocable currently'}}</div>
+    </div>
+    <div class="card" *ngIf="portfolio.pillar.name">
+      <div class="card-title">Pillar</div>
+      <div>{{portfolio.pillar.name}}</div>
+      <div>{{15000 | number: '1.0-4'}} ZNN locked</div>
+      <div *ngIf="portfolio.pillar.spawnTimestamp == 0">Spawned on Genesis</div>
+      <div *ngIf="portfolio.pillar.spawnTimestamp > 0">Spawned on {{portfolio.pillar.spawnTimestamp * 1000 | date: 'MMM
+        d, y,
+        h:mm:ss a'}}</div>
+      <div>{{(portfolio.pillar.slotCostQsr == 0 ? 150000 : portfolio.pillar.slotCostQsr / decimals) | number: '1.0-4'}}
+        QSR burned</div>
+      <div>Can be revoked in {{portfolio.pillar.revokeCooldown / 60 / 60 | number: '1.0-0'}} hours</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Total</div>
+      <div *ngIf="(totalZnn$ | async)">{{(totalZnn$ | async | number: '1.0-4')}} ZNN</div>
+      <div *ngIf="(totalQsr$ | async)">{{(totalQsr$ | async | number: '1.0-4')}} QSR</div>
+      <div *ngIf="(usdValue$ | async)">${{(usdValue$ | async | number: '1.2-2')}} USD</div>
+    </div>
+  </div>
+</div>
